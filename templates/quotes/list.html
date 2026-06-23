@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Quotes — Pascal Kitchens{% endblock %}
+
+{% block content %}
+<div class="quotes-container">
+    <h1>My Quotes</h1>
+    
+    <div class="quotes-actions">
+        <a href="{{ url_for('quotes.create_quote') }}" class="btn btn-primary">New Quote</a>
+    </div>
+
+    {% if quotes.items %}
+        <div class="quotes-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quote #</th>
+                        <th>Client</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for quote in quotes.items %}
+                        <tr>
+                            <td>{{ quote.quote_number }}</td>
+                            <td>{{ quote.customer.name }}</td>
+                            <td>R {{ "{:,.2f}".format(quote.total) }}</td>
+                            <td><span class="badge badge-{{ quote.status }}">{{ quote.status }}</span></td>
+                            <td>{{ quote.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <a href="{{ url_for('quotes.edit_quote', quote_id=quote.id) }}" class="btn btn-sm">Edit</a>
+                                <a href="{{ url_for('quotes.preview_quote', quote_id=quote.id) }}" class="btn btn-sm">Preview</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if quotes.pages > 1 %}
+            <div class="pagination">
+                {% if quotes.has_prev %}
+                    <a href="{{ url_for('quotes.list_quotes', page=quotes.prev_num) }}">Previous</a>
+                {% endif %}
+                
+                {% for page_num in quotes.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num == quotes.page %}
+                            <span class="active">{{ page_num }}</span>
+                        {% else %}
+                            <a href="{{ url_for('quotes.list_quotes', page=page_num) }}">{{ page_num }}</a>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if quotes.has_next %}
+                    <a href="{{ url_for('quotes.list_quotes', page=quotes.next_num) }}">Next</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <p>No quotes yet. <a href="{{ url_for('quotes.create_quote') }}">Create one</a></p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

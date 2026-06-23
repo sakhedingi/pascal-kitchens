@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Quote — Pascal Kitchens{% endblock %}
+
+{% block content %}
+<div class="create-quote-container">
+    <h1>Create New Quote</h1>
+    
+    <form method="post" class="form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="customer_name">Client Name</label>
+                <input type="text" id="customer_name" name="customer_name" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="project_name">Project / Site</label>
+                <input type="text" id="project_name" name="project_name" required class="form-control">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="customer_email">Email</label>
+                <input type="email" id="customer_email" name="customer_email" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="customer_phone">Phone</label>
+                <input type="tel" id="customer_phone" name="customer_phone" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="base_tier">Base Tier</label>
+            <select id="base_tier" name="base_tier" class="form-control">
+                <option value="essential">Essential — Pascal Entry</option>
+                <option value="signature" selected>Signature — Pascal Signature</option>
+                <option value="luxury">Luxury — Full Custom</option>
+                <option value="premium">Premium — Imported / European</option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create Quote</button>
+            <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

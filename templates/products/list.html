@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Products — Pascal Kitchens{% endblock %}
+
+{% block content %}
+<div class="products-container">
+    <h1>Product Catalogue</h1>
+    
+    <div class="filters">
+        <div class="filter-group">
+            <label>Category</label>
+            <select id="categoryFilter" onchange="filterProducts()" class="form-control">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                    <option value="{{ cat }}" {% if cat == current_category %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Tier</label>
+            <select id="tierFilter" onchange="filterProducts()" class="form-control">
+                <option value="">All Tiers</option>
+                {% for tier in tiers %}
+                    <option value="{{ tier }}" {% if tier == current_tier %}selected{% endif %}>{{ tier | title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+                <div class="product-card">
+                    <div class="product-header">
+                        <h3>{{ product.name }}</h3>
+                        <span class="badge">{{ product.tier }}</span>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-row">
+                            <span>Category:</span>
+                            <span>{{ product.category }}</span>
+                        </div>
+                        <div class="product-row">
+                            <span>Unit:</span>
+                            <span>{{ product.unit }}</span>
+                        </div>
+                        <div class="product-row">
+                            <span>Rate:</span>
+                            <span class="amount">R {{ "{:,.2f}".format(product.rate) }}</span>
+                        </div>
+                        {% if product.cost %}
+                            <div class="product-row">
+                                <span>Cost:</span>
+                                <span>R {{ "{:,.2f}".format(product.cost) }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>No products found. Try adjusting filters.</p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function filterProducts() {
+    const category = document.getElementById('categoryFilter').value;
+    const tier = document.getElementById('tierFilter').value;
+    const url = new URL(window.location);
+    if (category) url.searchParams.set('category', category);
+    if (tier) url.searchParams.set('tier', tier);
+    window.location = url;
+}
+</script>
+{% endblock %}

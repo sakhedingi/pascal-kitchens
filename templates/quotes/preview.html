@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Preview Quote — Pascal Kitchens{% endblock %}
+
+{% block content %}
+<div class="preview-full">
+    <div class="preview-actions">
+        <a href="{{ url_for('quotes.edit_quote', quote_id=quote.id) }}" class="btn btn-secondary">Back to Edit</a>
+        <button class="btn btn-primary" onclick="window.print()">Print / Save as PDF</button>
+    </div>
+
+    <div class="preview-document">
+        <div class="preview-header">
+            <div class="preview-brand">
+                <div class="preview-title">PASCAL <span class="gold">KITCHENS</span></div>
+                <div class="preview-subtitle">KITCHENS</div>
+            </div>
+            <h2>Quote</h2>
+            <div class="quote-meta-info">
+                Quote: {{ quote.quote_number }}<br>
+                Date: {{ quote.created_at.strftime('%d %B %Y') }}<br>
+                Client: {{ quote.customer.name }}<br>
+                Tier: {{ quote.base_tier }}
+            </div>
+        </div>
+
+        <div class="preview-body">
+            <table class="preview-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th class="center">Qty</th>
+                        <th class="right">Unit Price</th>
+                        <th class="right">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in quote.line_items %}
+                        <tr>
+                            <td>{{ item.description }}</td>
+                            <td class="center">{{ item.quantity }} {{ item.unit }}</td>
+                            <td class="right">R {{ "{:,.2f}".format(item.rate) }}</td>
+                            <td class="right">R {{ "{:,.2f}".format(item.total) }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="preview-totals">
+                <div class="totals-row">
+                    <span>Subtotal</span>
+                    <span class="amount">R {{ "{:,.2f}".format(quote.subtotal) }}</span>
+                </div>
+                <div class="totals-row">
+                    <span>Accessories (3%)</span>
+                    <span class="amount">R {{ "{:,.2f}".format(quote.accessories) }}</span>
+                </div>
+                <div class="totals-row">
+                    <span>Installation</span>
+                    <span class="amount">R {{ "{:,.2f}".format(quote.installation) }}</span>
+                </div>
+                <div class="totals-row">
+                    <span>Delivery</span>
+                    <span class="amount">R {{ "{:,.2f}".format(quote.delivery) }}</span>
+                </div>
+                <div class="totals-row">
+                    <span>VAT (15%)</span>
+                    <span class="amount">R {{ "{:,.2f}".format(quote.vat) }}</span>
+                </div>
+                <div class="totals-row grand-total">
+                    <span>Grand Total</span>
+                    <span class="amount">R {{ "{:,.2f}".format(quote.total) }}</span>
+                </div>
+            </div>
+
+            <div class="quote-terms">
+                <p><strong>Terms & Conditions</strong></p>
+                <p>Custom design, manufacture & professional installation. Blum hardware with lifetime mechanical warranty. KSA member. Prices valid 30 days. Deposit on order acceptance; balance per four-stage payment structure (5% / 60% / 30% / 5%). E&OE.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .preview-actions { display: none; }
+        body { margin: 0; }
+    }
+</style>
+{% endblock %}

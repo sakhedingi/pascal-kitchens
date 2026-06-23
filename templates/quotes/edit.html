@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Quote — Pascal Kitchens{% endblock %}
+
+{% block content %}
+<div class="quote-editor">
+    <div class="quote-header">
+        <h1>Quote {{ quote.quote_number }}</h1>
+        <div class="quote-meta">
+            <span>Client: {{ quote.customer.name }}</span>
+            <span>Tier: {{ quote.base_tier }}</span>
+            <span>Status: {{ quote.status }}</span>
+        </div>
+    </div>
+
+    <div class="editor-layout">
+        <!-- Build Pane -->
+        <div class="build-pane">
+            <div class="section">
+                <h3>Client Info</h3>
+                <div class="info-group">
+                    <span>{{ quote.customer.name }}</span>
+                    <span>{{ quote.customer.email }}</span>
+                    {% if quote.customer.phone %}
+                        <span>{{ quote.customer.phone }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Quote Items</h3>
+                <div id="line-items">
+                    {% for item in quote.line_items %}
+                        <div class="line-item">
+                            <div>{{ item.description }}</div>
+                            <div>{{ item.quantity }} {{ item.unit }}</div>
+                            <div>R {{ "{:,.2f}".format(item.total) }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="btn btn-sm" onclick="openProductSelector()">Add Items</button>
+            </div>
+
+            <div class="section">
+                <h3>Settings</h3>
+                <div class="form-group">
+                    <label>Installation</label>
+                    <input type="number" id="installation" value="{{ quote.installation }}" class="form-control sm">
+                </div>
+                <div class="form-group">
+                    <label>Delivery</label>
+                    <input type="number" id="delivery" value="{{ quote.delivery }}" class="form-control sm">
+                </div>
+            </div>
+
+            <div class="section-actions">
+                <a href="{{ url_for('quotes.preview_quote', quote_id=quote.id) }}" class="btn btn-primary">Preview</a>
+                <button class="btn btn-secondary" onclick="updateTotals()">Save Changes</button>
+                <form method="post" action="{{ url_for('quotes.delete_quote', quote_id=quote.id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this quote?')">Delete</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Preview Pane -->
+        <div class="preview-pane" id="preview">
+            <div class="preview-header">
+                <div class="preview-brand">
+                    <div class="preview-title">PASCAL <span class="gold">KITCHENS</span></div>
+                    <div class="preview-subtitle">KITCHENS</div>
+                </div>
+                <div class="preview-info">
+                    Quote: {{ quote.quote_number }}<br>
+                    Client: {{ quote.customer.name }}<br>
+                    Tier: {{ quote.base_tier }}
+                </div>
+            </div>
+            <div class="preview-body">
+                <div class="preview-items">
+                    {% if quote.line_items %}
+                        {% for item in quote.line_items %}
+                            <div class="preview-row">
+                                <span>{{ item.description }}</span>
+                                <span>{{ item.quantity }} {{ item.unit }}</span>
+                                <span class="preview-amount">R {{ "{:,.2f}".format(item.total) }}</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="muted">Add items to build the quote</div>
+                    {% endif %}
+                </div>
+                <div class="preview-totals">
+                    <div class="preview-row">
+                        <span>Subtotal</span>
+                        <span class="preview-amount">R {{ "{:,.2f}".format(quote.subtotal) }}</span>
+                    </div>
+                    <div class="preview-row">
+                        <span>Installation</span>
+                        <span class="preview-amount">R {{ "{:,.2f}".format(quote.installation) }}</span>
+                    </div>
+                    <div class="preview-row">
+                        <span>Delivery</span>
+                        <span class="preview-amount">R {{ "{:,.2f}".format(quote.delivery) }}</span>
+                    </div>
+                    <div class="preview-row">
+                        <span>VAT (15%)</span>
+                        <span class="preview-amount">R {{ "{:,.2f}".format(quote.vat) }}</span>
+                    </div>
+                    <div class="preview-row total">
+                        <span>Total</span>
+                        <span class="preview-amount">R {{ "{:,.2f}".format(quote.total) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function updateTotals() {
+    const installation = parseFloat(document.getElementById('installation').value) || 0;
+    const delivery = parseFloat(document.getElementById('delivery').value) || 0;
+    
+    const response = await fetch('{{ url_for("quotes.update_totals", quote_id=quote.id) }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            subtotal: 0,
+            accessories: 0,
+            installation: installation,
+            delivery: delivery,
+            vat: 0,
+            total: 0
+        })
+    });
+    
+    if (response.ok) {
+        alert('Changes saved');
+    }
+}
+
+function openProductSelector() {
+    // Placeholder for product selector modal
+    alert('Product selector coming soon');
+}
+</script>
+{% endblock %}
