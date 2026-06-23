@@ -115,6 +115,8 @@ For development:
 
 The application uses SQLite for local development. The database file is stored in the `instance/` folder as `pascal.db` and is created automatically on first run.
 
+For hosted deployments, use Render Postgres and set `DATABASE_URL` in your environment. The app will use that value automatically and fall back to SQLite only when `DATABASE_URL` is not set.
+
 ## Configuration
 
 Edit `config.py` to modify:
@@ -153,6 +155,7 @@ Edit `config.py` to modify:
 4. Add environment variables:
    - `SECRET_KEY` = a long random secret string
    - `FLASK_DEBUG` = `0`
+5. Add a Render Postgres database and set `DATABASE_URL` from that service.
 
 The app is configured to bind to `0.0.0.0` and read `PORT` from the environment for cloud hosting.
 

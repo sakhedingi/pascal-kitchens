@@ -10,7 +10,9 @@ class Config:
     # Prefer managed database URL in production; fallback to local SQLite.
     _database_url = os.environ.get("DATABASE_URL")
     if _database_url and _database_url.startswith("postgres://"):
-        _database_url = _database_url.replace("postgres://", "postgresql://", 1)
+        _database_url = _database_url.replace("postgres://", "postgresql+psycopg://", 1)
+    elif _database_url and _database_url.startswith("postgresql://"):
+        _database_url = _database_url.replace("postgresql://", "postgresql+psycopg://", 1)
 
     SQLALCHEMY_DATABASE_URI = _database_url or (
         "sqlite:///" + os.path.join(INSTANCE_DIR, "pascal.db")
