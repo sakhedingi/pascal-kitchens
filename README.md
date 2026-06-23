@@ -85,18 +85,18 @@ pascal-kitchens/
 
 2. **Create a virtual environment**
    ```bash
-   python -m venv venv
-   venv\Scripts\activate
+   python3 -m venv .venv
+   source .venv/bin/activate
    ```
 
 3. **Install dependencies**
    ```bash
-   pip install -r requirements.txt
+   python3 -m pip install -r requirements.txt
    ```
 
 4. **Run the application**
    ```bash
-   python app.py
+   python3 app.py
    ```
 
 5. **Access the application**
@@ -142,6 +142,19 @@ Edit `config.py` to modify:
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Database**: SQLite
 - **Security**: Werkzeug password hashing, CSRF protection
+
+## Deployment (Render)
+
+1. Push your code to GitHub.
+2. In Render, create a new **Web Service** from your repository.
+3. Configure commands:
+   - **Build Command**: `python3 -m pip install -r requirements.txt`
+   - **Start Command**: `gunicorn app:app`
+4. Add environment variables:
+   - `SECRET_KEY` = a long random secret string
+   - `FLASK_DEBUG` = `0`
+
+The app is configured to bind to `0.0.0.0` and read `PORT` from the environment for cloud hosting.
 
 ## License
 
